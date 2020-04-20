@@ -4,7 +4,7 @@ The [Nextcloud](https://nextcloud.com/) Docker images from hub.docker.com, eithe
 
 I integrated the [recommended configurations](https://docs.nextcloud.com/server/18/admin_manual/installation/server_tuning.html) from Nextcloud document with [php:fpm-alpine](https://hub.docker.com/_/php) as base image.
 
-Please be aware, after build, the image has only php-fpm runtime environment, has no Nextcloud source code inside. You have to download Nextcloud server package and extract into the mapped folder. See the below usage section.
+Please be aware, after build, the image has only php-fpm runtime environment, has no Nextcloud source code built-in. You have to download Nextcloud server package and extract into the mapped folder. See the below usage section.
 
 ## 1. build the image
 
@@ -26,7 +26,7 @@ After compiled successfully, the new image should be listed in local docker:
 $ docker image ls
 
 REPOSITORY          TAG                IMAGE ID           CREATED             SIZE
-hyscom/phpfpm       7.4fpm-alpine      97e8492c353d       5 minutes ago       267MB
+hyscom/phpfpm       7.4-nextcloud      97e8492c353d       5 minutes ago       267MB
 php                 fpm-alpine         f2a53c8e8392       2 days ago          71.4MB
 ```
 
