@@ -33,13 +33,13 @@ Create the working folder:
 $ sudo mkdir -p /srv/phpfpm-apps/{nextcloud,nextcloud-data}
 $ sudo chown -R www-data:www-data /srv/phpfpm-apps
 ```
+Please make sure the host has user `www-data` and group `www-data`, and their UID and GID are `33`. Of course you can use any user/group with any UID/GID, just please keep same to `Dockerfile`.
 
 Run:
 ``` bash
-$ docker run --name phpfpm \
+$ docker run --name phpfpm --restart unless-stopped \
     --network ipvlan --ip=192.168.0.204 \
     -v /srv/phpfpm-apps:/var/www/html \
-    --restart unless-stopped \
     -d php:7.4fpm-alpine
 ```
 
