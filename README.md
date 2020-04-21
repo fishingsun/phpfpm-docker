@@ -43,10 +43,10 @@ $ sudo tar jxf nextcloud-18.0.3.tar.bz2 -C /srv/phpfpm-apps
 ```
 
 Change the folders ownership:
-Please make sure the host has user `www-data` and group `www-data`, and their UID and GID are `33`.
 ``` bash
 $ sudo chown -R www-data:www-data /srv/phpfpm-apps
 ```
+Please make sure the host has user `www-data` and group `www-data`, and their UID and GID are `33`.
 
 Run container:
 ``` bash
