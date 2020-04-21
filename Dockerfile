@@ -94,10 +94,13 @@ RUN set -ex; \
     apk add --no-cache $runDeps; \
     apk del .build-deps; \
     \
+    # ref: https://docs.nextcloud.com/server/18/admin_manual/
     # configure php.ini
     cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini; \
-    sed -i 's/upload_max_filesize\ =\ 2M/upload_max_filesize\ =\ 20M/g' /usr/local/etc/php/php.ini; \
-    sed -i 's/post_max_size\ =\ 8M/post_max_size\ =\ 80M/g' /usr/local/etc/php/php.ini; \
+    sed -i 's/upload_max_filesize\ =\ 2M/upload_max_filesize\ =\ 8G/g' /usr/local/etc/php/php.ini; \
+    sed -i 's/post_max_size\ =\ 8M/post_max_size\ =\ 8G/g' /usr/local/etc/php/php.ini; \
+    sed -i 's/max_input_time\ =\ 60/max_input_time\ =\ 3600/g' /usr/local/etc/php/php.ini; \
+    sed -i 's/max_execution_time\ =\ 30/max_execution_time\ =\ 3600/g' /usr/local/etc/php/php.ini; \
     \
     # configure opcache
     { \
@@ -113,7 +116,28 @@ RUN set -ex; \
     echo 'apc.enable_cli=1' >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini; \
     \
     # configure memory_limit
-    echo 'memory_limit=512M' > /usr/local/etc/php/conf.d/memory-limit.ini
+    echo 'memory_limit=512M' > /usr/local/etc/php/conf.d/memory-limit.ini; \
+    # configure pdo_mysql
+    { \
+        echo '[mysql]'; \
+        echo 'mysql.allow_local_infile=On'; \
+        echo 'mysql.allow_persistent=On'; \
+        echo 'mysql.cache_size=2000'; \
+        echo 'mysql.max_persistent=-1'; \
+        echo 'mysql.max_links=-1'; \
+        echo 'mysql.connect_timeout=60'; \
+        echo 'mysql.trace_mode=Off'; \
+    } >> /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini; \
+    # configure pdo_pgsql
+    { \
+        echo '[PostgresSQL]'; \
+        echo 'pgsql.allow_persistent=On'; \
+        echo 'pgsql.auto_reset_persistent=Off'; \
+        echo 'pgsql.max_persistent=-1'; \
+        echo 'pgsql.max_links=-1'; \
+        echo 'pgsql.ignore_notice=0'; \
+        echo 'pgsql.log_notice=0'; \
+    } >> /usr/local/etc/php/conf.d/docker-php-ext-pdo_pgsql.ini
 
 COPY www.conf /usr/local/etc/php-fpm.d
 
