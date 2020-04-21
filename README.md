@@ -11,17 +11,16 @@ Please be aware, after build, the image has only php-fpm runtime environment, ha
 ``` bash
 $ git clone https://github.com/fishingsun/phpfpm-nextcloud-docker.git
 $ cd phpfpm-nextcloud-docker
-$ docker build -t phpfpm:7.4-nextcloud .
+$ docker build -t php:7.4fpm-nc .
 ```
-
-- If your local Docker environment has no default bridge network, please add `--network` option;
-- If you plan to upload the compiled image into your docker hub repo, recommend to add your hub id and hub repo in tag;
+- If your local docker environment has no default bridge network, please add `--network` option;
+- If you plan to upload the image into your docker hub repo, recommend to add your hub id and hub repo name in tag;
 - for example:
 ``` bash
 $ docker build --network ipvlan -t hyscom/phpfpm:7.4-nextcloud .
 ```
 
-After compiled successfully, the new image should be listed in local docker:
+After compiled successfully, the new image should be listed:
 ``` bash
 $ docker image ls
 
@@ -34,19 +33,28 @@ php                 fpm-alpine         f2a53c8e8392       2 days ago          71
 
 Create the working folder:
 ``` bash
-$ sudo mkdir -p /srv/phpfpm-apps/{nextcloud,nextcloud-data}
+$ sudo mkdir -p /srv/phpfpm-apps/nextcloud-data
+```
+
+Download nextcloud server package, and extract to `/srv/phpfpm-apps`:
+``` bash
+$ wget https://download.nextcloud.com/server/releases/nextcloud-18.0.3.tar.bz2
+$ sudo tar jxf nextcloud-18.0.3.tar.bz2 -C /srv/phpfpm-apps
+```
+
+Change the folders ownership:
+Please make sure the host has user `www-data` and group `www-data`, and their UID and GID are `33`.
+``` bash
 $ sudo chown -R www-data:www-data /srv/phpfpm-apps
 ```
-Please make sure the host has user `www-data` and group `www-data`, and their UID and GID are `33`.
 
-Run:
+Run container:
 ``` bash
 $ docker run --name phpfpm --restart unless-stopped \
     --network ipvlan --ip=192.168.0.204 -v /srv/phpfpm-apps:/var/www/html \
     -d hyscom/phpfpm:7.4-nextcloud
 ```
 
-Go to https://nextcloud.com/install/ and download Nextcloud server package, and extract into `/srv/phpfpm-apps/nextcloud` folder.
+Of course, you need a reverse proxy, pointing to `192.168.0.204:9000` in the above example case. Recommend [Caddy](https://github.com/caddyserver/examples/blob/master/nextcloud/Caddyfile) or [Nginx](https://docs.nextcloud.com/server/latest/admin_manual/installation/nginx.html).
 
-Of course, you need a reverse proxy, pointing to `192.168.0.204:9000` in the above example case. Recommend Caddy or Nginx.
-
+Recommend to use an independent database server to replace the built-in SQLite due to performance concern, for example, [MariaDB](https://hub.docker.com/_/mariadb).

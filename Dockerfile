@@ -130,7 +130,7 @@ RUN set -ex; \
     } >> /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini; \
     # configure pdo_pgsql
     { \
-        echo '[PostgresSQL]'; \
+        echo '[PostgreSQL]'; \
         echo 'pgsql.allow_persistent=On'; \
         echo 'pgsql.auto_reset_persistent=Off'; \
         echo 'pgsql.max_persistent=-1'; \
